@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LSPD Gang Intelligence Report</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#ffffff;
+    --card-border:#e4e4e4;
+    --line:#2b2b2b;
+    --line-soft:#dcdcdc;
+    --heading-gray:#8a94a3;
+    --ink:#2c2f34;
+    --navy:#173a63;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    padding:32px 16px 80px;
+    background:#eceeef;
+    font-family:'Courier New','Courier Prime',monospace;
+    color:var(--ink);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+  #capture-area{
+    width:820px;
+    max-width:100%;
+    background:var(--bg);
+    border:1px solid var(--card-border);
+    border-radius:6px;
+    box-shadow:0 20px 45px rgba(0,0,0,0.14);
+    padding:44px 52px 36px;
+  }
+  .badge-wrap{display:flex;justify-content:center;margin-bottom:18px;}
+  h1.dept-name{
+    text-align:center;
+    font-family:'Oswald',sans-serif;
+    font-size:23px;font-weight:700;letter-spacing:0.5px;
+    color:var(--heading-gray);text-transform:uppercase;
+    margin:0 0 6px;
+  }
+  h2.div-name{
+    text-align:center;
+    font-family:'Oswald',sans-serif;
+    font-size:15px;font-weight:600;letter-spacing:1.5px;
+    color:var(--heading-gray);text-transform:uppercase;
+    margin:0 0 4px;
+  }
+  h3.doc-name{
+    text-align:center;
+    font-family:'Oswald',sans-serif;
+    font-size:16px;font-weight:700;letter-spacing:1.5px;
+    color:var(--heading-gray);text-transform:uppercase;
+    margin:0 0 28px;
+  }
+  .divider{height:2px;background:var(--line);margin:22px 0 20px;}
+  .section-label{
+    font-family:'Oswald',sans-serif;
+    font-size:13px;font-weight:700;letter-spacing:1px;
+    color:var(--heading-gray);text-transform:uppercase;margin-bottom:14px;
+  }
+  .info-row{display:flex;gap:34px;margin-bottom:14px;flex-wrap:wrap;}
+  .field{flex:1;min-width:220px;}
+  .field-line{
+    display:flex;align-items:baseline;gap:6px;
+    border-bottom:1px solid var(--line-soft);padding-bottom:6px;
+  }
+  .field-line label, .group-label{
+    font-family:'Oswald',sans-serif;
+    font-size:10.5px;font-weight:700;letter-spacing:0.6px;
+    color:var(--ink);text-transform:uppercase;white-space:nowrap;
+  }
+  .field-line input{
+    flex:1;min-width:0;border:none;outline:none;background:transparent;
+    font-family:'Courier New',monospace;font-size:13.5px;color:var(--ink);padding:2px 2px;
+  }
+  .field-line input::placeholder{color:#b6bcc4;font-size:11.5px;}
+  .hint-text{font-size:10px;color:#a7aeb8;letter-spacing:0.2px;margin-top:4px;}
+
+  .list-group{margin-bottom:18px;}
+  .group-label{display:block;margin-bottom:4px;}
+  .list-hint{font-size:10.5px;color:#a7aeb8;margin-bottom:8px;line-height:1.5;}
+  .list-hint b{color:#8b4a4a;font-weight:700;}
+  .list-row{
+    display:flex;align-items:flex-start;gap:10px;
+    border-bottom:1px solid var(--line-soft);padding:6px 0 5px;
+  }
+  .list-row .bullet{font-size:13px;line-height:22px;color:var(--ink);}
+  .list-input{
+    flex:1;min-width:0;border:none;outline:none;resize:none;overflow:hidden;
+    background:transparent;font-family:'Courier New',monospace;font-size:13px;
+    line-height:22px;color:var(--ink);padding:0;height:22px;display:block;
+  }
+  .list-input::placeholder{color:#b6bcc4;font-size:11.5px;}
+  .rm-btn{
+    border:none;background:transparent;color:#b6bcc4;font-size:16px;line-height:22px;
+    cursor:pointer;padding:0 4px;
+  }
+  .rm-btn:hover{color:#8b4a4a;}
+  .add-btn{
+    margin-top:8px;border:1px dashed #c7ccd4;background:transparent;color:#8a94a3;
+    font-family:'Oswald',sans-serif;font-size:11px;letter-spacing:0.8px;text-transform:uppercase;
+    padding:5px 12px;border-radius:4px;cursor:pointer;
+  }
+  .add-btn:hover{border-color:var(--navy);color:var(--navy);}
+
+  .req-box{
+    font-size:11.5px;line-height:1.7;color:var(--ink);margin-bottom:10px;
+    padding:8px 12px;border-left:3px solid var(--line-soft);background:#fafbfc;
+  }
+  .req-box b{font-family:'Oswald',sans-serif;letter-spacing:0.6px;font-size:10.5px;text-transform:uppercase;}
+  .req-box ul{margin:4px 0 0;padding-left:18px;}
+  .lined{
+    width:100%;min-height:196px;border:none;outline:none;resize:vertical;
+    background-image:repeating-linear-gradient(to bottom,transparent,transparent 27px,var(--line-soft) 28px);
+    line-height:28px;font-family:'Courier New',monospace;font-size:13px;color:var(--ink);padding-top:2px;
+    display:block;
+  }
+  .lined::placeholder{color:#b6bcc4;font-size:11.5px;}
+
+  .foot-strip{height:2px;background:var(--line);margin-top:26px;}
+  .controls{
+    width:820px;max-width:100%;display:flex;justify-content:center;gap:12px;margin-top:22px;
+  }
+  .controls button{
+    font-family:'Oswald',sans-serif;letter-spacing:1px;font-size:13px;font-weight:600;
+    text-transform:uppercase;padding:12px 26px;border:none;border-radius:4px;cursor:pointer;
+    transition:transform .12s ease,filter .12s ease;
+  }
+  .controls button:hover{filter:brightness(1.08);}
+  .controls button:active{transform:translateY(1px);}
+  #export-btn{background:var(--navy);color:#fff;}
+  #reset-btn{background:#e2e2e2;color:#333;}
+  .hint{
+    width:820px;max-width:100%;text-align:center;color:#888;font-size:11.5px;margin-top:10px;
+    font-family:'Oswald',sans-serif;letter-spacing:.3px;
+  }
+  @media (max-width:860px){
+    #capture-area{padding:30px 22px 26px;}
+    .info-row{flex-direction:column;gap:14px;}
+  }
+</style>
+</head>
+<body>
+
+<div id="capture-area">
+
+  <div class="badge-wrap">
+    <img src="LSPD.png" alt="">
+  </div>
+
+  <h1 class="dept-name">Los Santos Police Department</h1>
+  <h2 class="div-name">Gang and Narcotics Division</h2>
+  <h3 class="doc-name">Gang Intelligence Report</h3>
+
+  <div class="section-label">Reporting Employee</div>
+  <div class="info-row">
+    <div class="field"><div class="field-line"><label>Name:</label><input type="text" placeholder="Firstname Lastname"></div></div>
+    <div class="field"><div class="field-line"><label>Badge Number:</label><input type="text" placeholder="#BadgeNumber"></div></div>
+  </div>
+  <div class="info-row">
+    <div class="field"><div class="field-line"><label>Rank:</label><input type="text"></div></div>
+    <div class="field"><div class="field-line"><label>Division:</label><input type="text" id="division-input" value="Gang and Narcotics Division"></div></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section-label">Report Details</div>
+  <div class="info-row">
+    <div class="field"><div class="field-line"><label>Date:</label><input type="text" placeholder="DD-MMM-YYYY"></div></div>
+    <div class="field"><div class="field-line"><label>Time:</label><input type="text" placeholder="HH:MM"></div></div>
+  </div>
+  <div class="info-row">
+    <div class="field"><div class="field-line"><label>Location:</label><input type="text" placeholder="Street or Area Name"></div></div>
+  </div>
+
+  <div class="list-group" data-list="vehicles" data-rows="2" data-ph="Model GTA SA dan/atau plat nomor, atau D.N.A.">
+    <span class="group-label">Vehicles Used</span>
+    <div class="list-rows"></div>
+    <button type="button" class="add-btn">+ Tambah baris</button>
+  </div>
+
+  <div class="list-group" data-list="weapons" data-rows="2" data-ph="Senjata atau alat yang digunakan, atau D.N.A.">
+    <span class="group-label">Weapons / Tools Used</span>
+    <div class="list-rows"></div>
+    <button type="button" class="add-btn">+ Tambah baris</button>
+  </div>
+
+  <div class="list-group" data-list="indicators" data-rows="2" data-required="true" data-ph="Indikator yang membuat laporan ini terkait gang">
+    <span class="group-label">Identifying Indicators*</span>
+    <div class="list-rows"></div>
+    <button type="button" class="add-btn">+ Tambah baris</button>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section-label">Narrative</div>
+  <div class="req-box">
+    <b>Requirements:</b>
+    <ul>
+      <li>Use a third-person point of view.</li>
+      <li>All officers and units involved must be identified by name and unit designation.</li>
+    </ul>
+  </div>
+  <textarea class="lined" id="narrative" placeholder="Tulis narasi laporan di sini (singkat, padat, dan jelas)..."></textarea>
+
+  <div class="divider"></div>
+
+  <div class="section-label">Supporting Evidence*</div>
+  <div class="list-group" data-list="evidence" data-rows="3" data-required="true" data-ph="Bukti pendukung">
+    <div class="list-rows"></div>
+    <button type="button" class="add-btn">+ Tambah baris</button>
+  </div>
+
+  <div class="foot-strip"></div>
+</div>
+
+<div class="controls">
+  <button id="export-btn">💾 Export ke JPG</button>
+  <button id="reset-btn">↺ Reset Form</button>
+</div>
+<div class="hint">Isi form di atas lalu klik "Export ke JPG" untuk mengunduh laporan sebagai gambar.</div>
+
+<script>
+  function autoGrow(el){
+    el.style.height = '22px';
+    el.style.height = el.scrollHeight + 'px';
+  }
+
+  function addRow(group, value){
+    const rows = group.querySelector('.list-rows');
+    const row = document.createElement('div');
+    row.className = 'list-row';
+    row.innerHTML = '<span class="bullet">•</span><textarea class="list-input" rows="1"></textarea><button type="button" class="rm-btn" title="Hapus baris">×</button>';
+    const ta = row.querySelector('textarea');
+    ta.placeholder = group.dataset.ph || '';
+    if (value) ta.value = value;
+    ta.addEventListener('input', () => autoGrow(ta));
+    ta.addEventListener('keydown', e => { if (e.key === 'Enter') e.preventDefault(); });
+    row.querySelector('.rm-btn').addEventListener('click', () => {
+      if (rows.children.length > 1) row.remove();
+      else { ta.value = ''; autoGrow(ta); }
+    });
+    rows.appendChild(row);
+  }
+
+  function initLists(){
+    document.querySelectorAll('.list-group').forEach(group => {
+      group.querySelector('.list-rows').innerHTML = '';
+      const n = parseInt(group.dataset.rows, 10) || 1;
+      for (let i = 0; i < n; i++) addRow(group);
+      const btn = group.querySelector('.add-btn');
+      if (!btn.dataset.bound) {
+        btn.dataset.bound = '1';
+        btn.addEventListener('click', () => addRow(group));
+      }
+    });
+  }
+  initLists();
+
+  document.getElementById('reset-btn').addEventListener('click', () => {
+    document.querySelectorAll('#capture-area input[type=text]').forEach(el => el.value = '');
+    document.getElementById('division-input').value = 'Gang and Narcotics Division';
+    document.getElementById('narrative').value = '';
+    initLists();
+  });
+
+  function listIsEmpty(group){
+    const vals = Array.from(group.querySelectorAll('.list-input')).map(t => t.value.trim());
+    return !vals.some(v => v && v.toUpperCase().replace(/\./g,'') !== 'DNA');
+  }
+
+  document.getElementById('export-btn').addEventListener('click', () => {
+    const missing = [];
+    document.querySelectorAll('.list-group[data-required="true"]').forEach(g => {
+      if (listIsEmpty(g)) missing.push(g.dataset.list === 'indicators' ? 'Identifying Indicators' : 'Supporting Evidence');
+    });
+    if (missing.length) {
+      if (!confirm('Bagian wajib belum terisi (D.N.A. tidak berlaku): ' + missing.join(', ') + '. Tetap export?')) return;
+    }
+
+    const target = document.getElementById('capture-area');
+    const btn = document.getElementById('export-btn');
+    const originalText = btn.textContent;
+    btn.textContent = 'Memproses...';
+    btn.disabled = true;
+
+    const replaced = [];
+    const hidden = [];
+
+    // hide add / remove buttons and unused empty rows' controls
+    target.querySelectorAll('.add-btn, .rm-btn').forEach(el => { hidden.push({el, d: el.style.display}); el.style.display = 'none'; });
+
+    target.querySelectorAll('input[type=text]').forEach(inp => {
+      const span = document.createElement('span');
+      span.textContent = inp.value || '';
+      span.style.fontFamily = "'Courier New', monospace";
+      span.style.fontSize = '13.5px';
+      span.style.display = 'inline-block';
+      span.style.flex = '1';
+      span.style.minHeight = '18px';
+      span.style.padding = '2px 2px';
+      inp.style.display = 'none';
+      inp.parentNode.insertBefore(span, inp);
+      replaced.push({el: inp, temp: span});
+    });
+
+    target.querySelectorAll('textarea.list-input').forEach(ta => {
+      const div = document.createElement('div');
+      div.textContent = ta.value || '';
+      div.style.flex = '1';
+      div.style.minWidth = '0';
+      div.style.whiteSpace = 'pre-wrap';
+      div.style.wordBreak = 'break-word';
+      div.style.fontFamily = "'Courier New', monospace";
+      div.style.fontSize = '13px';
+      div.style.lineHeight = '22px';
+      div.style.minHeight = '22px';
+      ta.style.display = 'none';
+      ta.parentNode.insertBefore(div, ta);
+      replaced.push({el: ta, temp: div});
+    });
+
+    const nar = document.getElementById('narrative');
+    const nDiv = document.createElement('div');
+    nDiv.textContent = nar.value || '';
+    nDiv.style.whiteSpace = 'pre-wrap';
+    nDiv.style.wordBreak = 'break-word';
+    nDiv.style.fontFamily = "'Courier New', monospace";
+    nDiv.style.fontSize = '13px';
+    nDiv.style.lineHeight = '28px';
+    nDiv.style.minHeight = nar.offsetHeight + 'px';
+    nDiv.style.backgroundImage = 'repeating-linear-gradient(to bottom, transparent, transparent 27px, #dcdcdc 28px)';
+    nar.style.display = 'none';
+    nar.parentNode.insertBefore(nDiv, nar);
+    replaced.push({el: nar, temp: nDiv});
+
+    const restore = () => {
+      replaced.forEach(r => { r.el.style.display = ''; r.temp.remove(); });
+      hidden.forEach(h => { h.el.style.display = h.d; });
+      btn.textContent = originalText;
+      btn.disabled = false;
+    };
+
+    html2canvas(target, {scale: 2, backgroundColor: '#ffffff', useCORS: true}).then(canvas => {
+      restore();
+      const link = document.createElement('a');
+      link.download = `GIR_LSPD_${Date.now()}.jpg`;
+      link.href = canvas.toDataURL('image/jpeg', 0.95);
+      link.click();
+    }).catch(err => {
+      restore();
+      alert('Gagal mengekspor gambar. Coba lagi.');
+      console.error(err);
+    });
+  });
+</script>
+
+</body>
+</html>
